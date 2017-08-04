@@ -1,10 +1,13 @@
 (function(){
+
   'use strict';
 
   var countText = document.getElementById('js-text-count');
 
   var decrementButton = document.getElementById('js-button-decrement'),
       incrementButton = document.getElementById('js-button-increment');
+
+  var store, unsubscribe;
 
   /**
    * counter reducer
@@ -13,6 +16,7 @@
    * @param {Object} action
    */
   function counter(state, action) {
+    // NOTE: or Redux.createStore(counter, 0);
     if (typeof state === 'undefined') {
       return 0;
     }
@@ -27,7 +31,7 @@
     }
   }
 
-  var store = Redux.createStore(counter);
+  store = Redux.createStore(counter);
 
   /**
    * render function
@@ -36,19 +40,29 @@
     countText.innerHTML = store.getState().toString();
   }
 
-  store.subscribe(render);
-
-  decrementButton.addEventListener('click', function() {
+  /**
+   * onclick handler for decrement button
+   */
+  function onClickDecrement() {
     store.dispatch({
       type: 'DECREMENT'
     });
-  }, false);
-  incrementButton.addEventListener('click', function() {
+  }
+
+  /**
+   * onclick handler for increment button
+   */
+  function onClickIncrement() {
     store.dispatch({
       type: 'INCREMENT'
     });
-  }, false);
+  }
+
+  decrementButton.addEventListener('click', onClickDecrement, false);
+  incrementButton.addEventListener('click', onClickIncrement, false);
 
   render();
+
+  unsubscribe = store.subscribe(render);
 
 }());
